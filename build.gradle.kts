@@ -1,39 +1,41 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import io.izzel.taboolib.gradle.*
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+
 plugins {
-    `java-library`
-    `maven-publish`
-    id("io.izzel.taboolib") version "1.42"
-    id("org.jetbrains.kotlin.jvm") version "1.5.31"
+    java
+    id("io.izzel.taboolib") version "2.0.27"
+    id("org.jetbrains.kotlin.jvm") version "2.2.0"
 }
 
 taboolib {
+    env {
+        install(Basic)
+        install(Bukkit)
+        install(BukkitNMS)
+        install(BukkitNMSUtil)
+        install(BukkitUtil)
+        install(CommandHelper)
+        install(MinecraftChat)
+        install(XSeries)
+    }
     description {
+        name = "Yesod"
         contributors {
             name("坏黑")
         }
         load("STARTUP")
     }
-    install("common")
-    install("common-5")
-    install("module-configuration")
-    install("module-chat")
-    install("module-nms")
-    install("platform-bukkit")
-    classifier = null
-    version = "6.0.9-95"
+    version { taboolib = "6.2.4-65252583" }
 }
 
 repositories {
-    maven { url = uri("https://repo.tabooproject.org/storages/public/releases") }
     mavenCentral()
 }
 
 dependencies {
-    compileOnly("ink.ptms.core:v11701:11701-minimize:universal")
-    compileOnly("ink.ptms.core:v11600:11600-minimize")
-    compileOnly("ink.ptms.core:v11800:11800-minimize:api")
-    compileOnly("ink.ptms.core:v11802:11802:mapped")
-    compileOnly("ink.ptms.core:v11802:11802:universal")
-    compileOnly("ink.ptms:nms-all:1.0.0")
+    compileOnly("ink.ptms.core:v12004:12004:mapped")
+    compileOnly("ink.ptms.core:v12004:12004:universal")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 }
@@ -42,35 +44,14 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-Xjvm-default=all")
+tasks.withType<KotlinCompile> {
+    compilerOptions {
+        jvmTarget.set(JVM_17)
+        freeCompilerArgs.add("-Xjvm-default=all")
     }
 }
 
-configure<JavaPluginConvention> {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-publishing {
-    repositories {
-        maven {
-            url = uri("https://repo.tabooproject.org/storages/public/releases")
-            credentials {
-                username = project.findProperty("taboolibUsername").toString()
-                password = project.findProperty("taboolibPassword").toString()
-            }
-            authentication {
-                create<BasicAuthentication>("basic")
-            }
-        }
-    }
-    publications {
-        create<MavenPublication>("library") {
-            from(components["java"])
-            groupId = "ink.ptms"
-        }
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }

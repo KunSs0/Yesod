@@ -3,20 +3,20 @@ package ink.ptms.yesod
 import org.bukkit.GameMode
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
-import org.bukkit.generator.ChunkGenerator
 import taboolib.common.platform.Plugin
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.ConfigNode
-import taboolib.module.configuration.SecuredFile
-import taboolib.module.configuration.createLocal
-import taboolib.platform.BukkitWorldGenerator
+import taboolib.module.configuration.Configuration
 
-object Yesod : Plugin(), BukkitWorldGenerator {
+@ConfigNode(bind = "config.yml")
+object Yesod : Plugin() {
 
-    val data by lazy { createLocal("data.yml") }
+    @Config("data.yml", autoReload = true)
+    lateinit var data: Configuration
+        private set
 
     @Config(migrate = true)
-    lateinit var conf: SecuredFile
+    lateinit var conf: Configuration
         private set
 
     @ConfigNode("void-protect")
@@ -32,11 +32,11 @@ object Yesod : Plugin(), BukkitWorldGenerator {
         private set
 
     @ConfigNode("block-inventory")
-    lateinit var blockInventory: List<String>
+    var blockInventory: List<String> = emptyList()
         private set
 
     @ConfigNode("block-interact")
-    lateinit var blockInteract: List<String>
+    var blockInteract: List<String> = emptyList()
         private set
 
     @ConfigNode("thorn-override")
@@ -44,18 +44,14 @@ object Yesod : Plugin(), BukkitWorldGenerator {
         private set
 
     @ConfigNode("block-features")
-    lateinit var blockFeatures: List<String>
+    var blockFeatures: List<String> = emptyList()
         private set
 
     @ConfigNode("block-teleport")
-    lateinit var blockTeleport: List<String>
+    var blockTeleport: List<String> = emptyList()
         private set
 
     fun Entity.bypass(hard: Boolean = false): Boolean {
         return this !is Player || isOp && gameMode == GameMode.CREATIVE && (!hard || isSneaking)
-    }
-
-    override fun getDefaultWorldGenerator(worldName: String, name: String?): ChunkGenerator {
-        return YesodGenerator()
     }
 }

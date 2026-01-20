@@ -1,6 +1,5 @@
 package ink.ptms.yesod.function
 
-import com.mojang.brigadier.suggestion.Suggestions
 import ink.ptms.yesod.Yesod
 import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
@@ -41,12 +40,19 @@ object FunctionPacket {
             e.isCancelled = true
         }
         if (e.packet.name == "PacketPlayOutTabComplete" && !e.player.isOp) {
-            if (e.packet.read<Suggestions>("b")!!.list.any { Bukkit.getPlayerExact(it.text) == null }) {
-                return
+            runCatching {
+                val suggestions = e.packet.read<Any>("b") ?: return
+                val list = suggestions.invokeMethod<List<Any>>("getList") ?: return
+                if (list.any { suggestion ->
+                    val text = suggestion.invokeMethod<String>("getText") ?: ""
+                    Bukkit.getPlayerExact(text) == null
+                }) {
+                    return
+                }
             }
             e.isCancelled = true
         }
-        if (e.packet.name == "PacketPlayOutWorldParticles" && e.packet.read<Any>("j")!!.invokeMethod<String>("a")!! == "minecraft:damage_indicator") {
+        if (e.packet.name == "PacketPlayOutWorldParticles" && e.packet.read<Any>("j")?.invokeMethod<String>("a") == "minecraft:damage_indicator") {
             e.isCancelled = true
         }
         if (e.packet.name in entityPackets && e.packet.read<Int>("a") == bite[e.player.name]) {

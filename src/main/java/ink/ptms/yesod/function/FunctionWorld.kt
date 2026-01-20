@@ -13,15 +13,12 @@ import org.bukkit.event.hanging.HangingBreakEvent
 import org.bukkit.event.player.*
 import org.bukkit.event.raid.RaidTriggerEvent
 import org.bukkit.util.Vector
-import taboolib.common.platform.command.command
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
 import taboolib.common.util.Location
 import taboolib.library.configuration.ConfigurationSection
-import taboolib.module.configuration.util.setLocation
 import taboolib.platform.util.attacker
 import taboolib.platform.util.toBukkitLocation
-import taboolib.platform.util.toProxyLocation
 
 /**
  * @author sky
@@ -29,16 +26,6 @@ import taboolib.platform.util.toProxyLocation
  */
 @Suppress("SpellCheckingInspection")
 object FunctionWorld {
-
-    init {
-        command("setserverspawn", permission = "admin") {
-            execute<Player> { sender, _, _ ->
-                val loc = sender.location.clone()
-                Yesod.data.setLocation("spawn", loc.toProxyLocation())
-                sender.sendMessage("服务器出生点已被重设在${loc.x},${loc.y},${loc.z}(${loc.yaw},${loc.pitch})")
-            }
-        }
-    }
 
     @SubscribeEvent
     fun e(e: PlayerJoinEvent) {

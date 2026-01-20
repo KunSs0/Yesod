@@ -6,7 +6,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import org.bukkit.event.player.PlayerCommandSendEvent
 import org.spigotmc.SpigotConfig
 import taboolib.common.LifeCycle
-import taboolib.common.io.taboolibId
+import taboolib.common.TabooLib
 import taboolib.common.platform.Awake
 import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.event.SubscribeEvent
@@ -23,7 +23,7 @@ object FunctionCommand {
         if (Yesod.conf.getBoolean("command-block")) {
             PlatformFactory.getAPI<BukkitCommand>().commandMap.commands.forEach { command ->
                 if (Yesod.conf.getStringList("block-command-path").any { name -> command.javaClass.name.startsWith(name) }) {
-                    if (command !is PluginCommand || !command.javaClass.name.startsWith("io.izzel.$taboolibId")) {
+                    if (command !is PluginCommand || !command.javaClass.name.startsWith("io.izzel.taboolib")) {
                         command.permission = "*"
                     }
                 }
@@ -45,7 +45,7 @@ object FunctionCommand {
         if (e.player.isOp || !Yesod.conf.getBoolean("command-block")) {
             return
         }
-        val v = e.message.split(" ")[0].toLowerCase().substring(1)
+        val v = e.message.split(" ")[0].lowercase().substring(1)
         if (v.contains(":") || v in Yesod.conf.getStringList("block-command-name")) {
             e.isCancelled = true
             e.player.sendMessage(SpigotConfig.unknownCommandMessage)

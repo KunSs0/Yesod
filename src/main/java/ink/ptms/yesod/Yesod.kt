@@ -4,16 +4,18 @@ import org.bukkit.GameMode
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import taboolib.common.platform.Plugin
+import taboolib.common.util.unsafeLazy
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.ConfigNode
 import taboolib.module.configuration.Configuration
+import taboolib.module.configuration.createTempData
 
 @ConfigNode(bind = "config.yml")
 object Yesod : Plugin() {
 
-    @Config("data.yml", autoReload = true)
-    lateinit var data: Configuration
-        private set
+    val data: Configuration by unsafeLazy {
+        createTempData("data.yml")
+    }
 
     @Config(migrate = true)
     lateinit var conf: Configuration
